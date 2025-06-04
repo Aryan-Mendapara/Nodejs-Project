@@ -35,8 +35,6 @@ function Ragister() {
             const message = error.response?.data?.message || "Ragister failed. Try again.";
             setError(message);
         }
-
-
     }
 
     return (

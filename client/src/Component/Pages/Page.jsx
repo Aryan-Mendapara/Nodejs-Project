@@ -8,8 +8,10 @@ function Page() {
     const handleSubmit = (path) => {
         if (path === 'login') {
             navigate('/login')
-        } else {
+        } else if (path === 'ragister') {
             navigate('/ragister')
+        } else {
+            navigate('/todo')
         }
     }
 
@@ -27,6 +29,12 @@ function Page() {
                     className='border border-gray-500 bg-blue-400 p-4 rounded-xl my-2 w-25'
                 >
                     Ragister
+                </button>
+                 <button
+                    onClick={() => handleSubmit('todo')}
+                    className='border border-gray-500 bg-blue-400 p-4 rounded-xl my-2 w-25'
+                >
+                    Todo
                 </button>
             </div>
 

@@ -3,6 +3,7 @@ import Login from './Component/Login/Login'
 import Ragister from './Component/Login/Ragister'
 import Page from './Component/Pages/Page'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import ToDo from './Component/TodoList/Todo'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Routes>
               <Route path='/login' element={<Login />} />
               <Route path='/ragister' element={<Ragister />} />
+              <Route path='/todo' element={<ToDo />} />
             </Routes>
           } 
         />        
