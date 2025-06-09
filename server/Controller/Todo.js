@@ -34,14 +34,14 @@ const getTodo = async (req, res) => {
 
 const updateTodo = async (req, res) => {
     try {
-        const todo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        const todo = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!todo) {
-            res.status(400).json({ message: "Todo not Found" });
+            return res.status(400).json({ message: "Todo not Found" });
         }
         res.status(200).json({ message: "Todo updated Successfully" });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message : "Internal Server Error"})
+        res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

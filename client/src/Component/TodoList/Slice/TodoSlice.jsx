@@ -1,4 +1,4 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     todo: [],
@@ -11,35 +11,48 @@ const ToDoReducer = createSlice({
     initialState,
     reducers: {
         addTodo: (state, action) => {
-            state.todo.push({ id: nanoid(), tasks: action.payload });
-            console.log(">>>>>>>>>",action);
-            
+            state.todo.push({
+                _id: action.payload._id,
+                tittle: action.payload.tittle,
+            });
         },
+
         removeTodo: (state, action) => {
-            state.todo = state.todo.filter((todo) => todo.id !== action.payload);
+            state.todo = state.todo.filter((todo) => todo._id !== action.payload);
         },
+
         updateTodo: (state, action) => {
             state.todo = state.todo.map((todo) => {
-                if (todo.id === action.payload.id) {
-                    return { id: todo.id, tasks: action.payload.tasks };
+                if (todo._id === action.payload._id) {
+                    return { ...todo, tittle: action.payload.tittle };
                 }
                 return todo;
             });
         },
+
         setEdit: (state, action) => {
-            state.editId = action.payload.id
-            state.editTask = action.payload.tasks
+            state.editId = action.payload._id;
+            state.editTask = action.payload.tittle;
         },
-        cancelTodo: (state, action) => {
-            state.editId = null
-            state.editTask = ''
+
+        cancelTodo: (state) => {
+            state.editId = null;
+            state.editTask = '';
         },
+
         handleEditChange: (state, action) => {
             state.editTask = action.payload;
-
-        }
+        },
     },
 });
 
-export const { addTodo, removeTodo, updateTodo, setEdit, cancelTodo, handleEditChange} = ToDoReducer.actions;
+export const {
+    addTodo,
+    removeTodo,
+    updateTodo,
+    setEdit,
+    cancelTodo,
+    handleEditChange,
+} = ToDoReducer.actions;
+
 export default ToDoReducer.reducer;

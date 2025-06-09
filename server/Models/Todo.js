@@ -1,12 +1,10 @@
 const mongoose = require("mongoose");
-const { type } = require("os");
 
 const TodoSchema = new mongoose.Schema({
-    tittle: {
-        type: String,
-        description: String,
-        completed: Boolean
-    }    
+    tittle:{
+        type:String,
+        required:true
+    }
 })
 
 const Todo = mongoose.model("TodoList", TodoSchema);
