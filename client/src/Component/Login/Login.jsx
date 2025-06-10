@@ -27,7 +27,7 @@ function Login() {
         body: { fname, lname, email, password },
       });
 
-      setSuccess("User login successful!");
+      setSuccess("User login successfull!");
       console.log("Server response:", response);
     } catch (err) {
       const message = err.response?.data?.message || "Login failed. Try again.";
