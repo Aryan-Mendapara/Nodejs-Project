@@ -17,17 +17,25 @@ const LoginSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    role: {
+    // role: {
+    //     type: String,
+    //     enum: ["user", "admin"],
+    //     default: "user"
+    // },
+    otp: {
         type: String,
-        enum: ["user", "admin"],
-        default: "user"
+        require: true
+    },
+    otp_expires: {
+        type: Date,
+        default: Date.now
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
-    // otp: {
-    //     type: Number,
-    //     require: true
-    // }
-}, {timestamps: true})
+}, { timestamps: true })
 
-const Login = mongoose.model("rolecheck",LoginSchema)
+const Login = mongoose.model("rolecheck", LoginSchema)
 
-module.exports = {Login};
+module.exports = { Login };

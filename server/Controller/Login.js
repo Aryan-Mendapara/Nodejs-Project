@@ -2,17 +2,18 @@ const { Ragister } = require("../Models/Ragister");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const { Login } = require("../Models/Login");
+const sendEmail = require("../Middleware/sendMail");
 
 const secretKey = process.env.JWT_KEY || "adjkasd#asfsdf%^djkncj";
 
 const addLogin = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+        const { email, password } = req.body;
         console.log(">>>>>>", req.body);
 
         const existUser = await Login.findOne({ email });
         if (!existUser) {
-            return res.status(401).json({ message: "not exist user" });
+            return res.status(401).json({ message: "User does not exist" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, existUser.password);
@@ -22,22 +23,58 @@ const addLogin = async (req, res) => {
 
         const token = jwt.sign({ id: existUser._id }, secretKey, { expiresIn: '1d' });
 
-        res.status(200).json({
-            message: "Login successful",
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+        const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+        // Send email (await first)
+        await sendEmail(email, 'Verify your email', `Your OTP is: ${otp}`);
+
+        // Update user with OTP
+        await Login.updateOne({ email }, { otp, otp_expires: otpExpiry });
+
+        // Respond to client
+        return res.status(200).json({
+            message: "Login successful. OTP sent to your email.",
             token,
             user: {
                 fname: existUser.fname,
                 lname: existUser.lname,
                 email: existUser.email,
-                role: existUser.role
+                otp,
+                otpExpiry
             }
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal Server Error" });
+        console.error("Login error:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 };
+
+
+// const verifyOTP = async (req, res) => {
+//     const { email, otp } = req.body;
+//     try {
+//         const user = await Login.findOne({ email });
+
+//         if (!user) return res.status(400).json({ message: 'User not found' });
+//         if (user.isVerified) return res.status(400).json({ message: 'Already verified' });
+
+//         if (user.otp !== otp || user.otp_expires < Date.now()) {
+//             return res.status(400).json({ message: 'Invalid or expired OTP' });
+//         }
+
+//         user.isVerified = true;
+//         user.otp = null;
+//         user.otp_expires = null;
+//         await user.save();
+
+//         res.status(200).json({ message: 'Email verified successfully' });
+//     } catch (err) {
+//         res.status(500).json({ error: err.message });
+//     }
+// };
 
 
 const addRagister = async (req, res) => {
@@ -63,7 +100,7 @@ const addRagister = async (req, res) => {
             lname,
             email,
             password: hashPassword,
-            role
+
         })
 
         await user.save()
@@ -125,4 +162,4 @@ const deleteLogin = async (req, res) => {
     }
 }
 
-module.exports = { addLogin, getLoginById, getAllLogin, updateLogin, deleteLogin, addRagister};
+module.exports = { addLogin, getLoginById, getAllLogin, updateLogin, deleteLogin, addRagister };
